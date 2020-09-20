@@ -1,8 +1,249 @@
 <html>
-  <head>
-    <title>Pondo Client Portal</title>
-  </head>
-  <body>
-    welcome to pondo
-  </body>
+
+<head>
+  <title>Pondo Client Portal</title>
+  <style>
+    @import url(https://fonts.googleapis.com/css?family=Rubik);
+
+    body {
+      font-family: 'Rubik';
+      margin: 0;
+    }
+
+    .container {
+      padding: 20px;
+      background-color: #f7f7f7;
+    }
+
+    .indents {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    tr {
+      text-align: center;
+    }
+
+    td>div,
+    th>div {
+      display: block;
+    }
+
+    th>div {
+      margin-bottom: 15px;
+      background-color: #efefef;
+      color: #385d6b;
+      padding: 15px;
+    }
+
+    td>div {
+      margin-bottom: 10px;
+    }
+
+    .bb-id {
+      background-color: #e30137;
+      color: white;
+      border-radius: 4px;
+      padding: 7px;
+      width: 66%;
+      margin: 0 auto;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .caret-action {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Pando Loadboard</h1>
+    <table class="indents">
+      <thead>
+        <th>
+          <div>Blackbuck ID</div>
+        </th>
+        <th>
+          <div>Indent ID</div>
+        </th>
+        <th>
+          <div>Status</div>
+        </th>
+        <th>
+          <div>Date</div>
+        </th>
+        <th>
+          <div>Vehicle Req. Date</div>
+        </th>
+        <th>
+          <div>&nbsp;</div>
+        </th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="bb-id"></div>
+          </td>
+          <td>
+            <div>12345</div>
+          </td>
+          <td>
+            <div>Indented</div>
+          </td>
+          <td>
+            <div>04 Aug 2020</div>
+          </td>
+          <td>
+            <div>05 Aug 2020</div>
+          </td>
+          <td>
+            <div class="caret-action">&#x25BC</div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <bb-sdk></bb-sdk>
+          </td>
+        </tr>
+        <tr>
+          <td id="bb-id">
+            <div>334444</div>
+          </td>
+          <td>
+            <div>12345</div>
+          </td>
+          <td>
+            <div>Indented</div>
+          </td>
+          <td>
+            <div>04 Aug 2020</div>
+          </td>
+          <td>
+            <div>05 Aug 2020</div>
+          </td>
+          <td>
+            <div class="caret-action">&#x25BC</div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="bb-id"></div>
+          </td>
+          <td>
+            <div>12345</div>
+          </td>
+          <td>
+            <div>Indented</div>
+          </td>
+          <td>
+            <div>04 Aug 2020</div>
+          </td>
+          <td>
+            <div>05 Aug 2020</div>
+          </td>
+          <td>
+            <div class="caret-action">&#x25BC</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    var bbLoginPortal = 'https://pondo.blockbuck.tech';
+
+    // Use custom elements API v1 to register a new HTML tag and define its JS behavior
+    // using an ES6 class. Every instance of <fancy-tab> will have this same prototype.
+    customElements.define('bb-sdk', class extends HTMLElement {
+      constructor() {
+        super(); // always call super() first in the constructor.
+
+        // Attach a shadow root to <fancy-tabs>.
+        const shadowRoot = this.attachShadow({ mode: 'open' });
+        shadowRoot.innerHTML = `
+                  <style>
+                    .indent-details-leads {
+                      margin: 20px;
+                      padding: 20px;
+                      background-color: white;
+                      font-family: 'Rubik';
+                      font-size: 18px;
+                    }
+                  </style>
+                  
+                  <div class="indent-details-leads">
+                    Indent Details
+                  </div>  
+        `;
+      }
+    });
+
+    function navigate(href, newTab) {
+      var a = document.createElement('a');
+      a.href = href;
+      if (newTab) {
+        a.setAttribute('target', '_blank');
+      }
+      a.click();
+    }
+
+    function connectToBlackbuck() {
+      navigate(bbLoginPortal, true);
+    }
+
+    var fetchResults;
+
+    window.onload = function () {
+      var bbIds = document.getElementsByClassName('bb-id');
+      var params = (new URL(document.location)).searchParams;
+      var bbSessionParam = params.get('bbSession');
+      var bbAuthError = params.get('bbAuthError');
+
+      if (bbSessionParam) {
+        document.cookie = 'bbSession=' + bbSessionParam;
+
+        fetch('http://localhost:3300/', {
+          method: 'GET',
+        })
+          .then(
+            function (response) {
+              if (response.status !== 200) {
+                console.log('Looks like there was a problem. Status Code: ' +
+                  response.status);
+                return;
+              }
+
+              // Examine the text in the response
+              response.json().then(function (data) {
+                console.log(data);
+                fetchResults = data;
+              });
+            }
+          )
+          .catch(function (err) {
+            console.log('Fetch Error :-S', err);
+          });
+      }
+
+      var bbSession = document.cookie.split(';').filter(function (cx) {
+        return cx.indexOf('bbSession') !== -1 && cx !== "";
+      })[0];
+
+
+      for (var element of bbIds) {
+        if (element.innerText === "") {
+          element.innerText = bbSession ? "Post to Blackbuck" : "Connect to Blackbuck";
+          element.classList.add("bb-id");
+          element.addEventListener('click', connectToBlackbuck);
+        } else {
+          element.classList.remove("bb-id");
+          element.removeEventListener('click', connectToBlackbuck);
+        }
+      };
+    };
+  </script>
+</body>
+
 </html>
