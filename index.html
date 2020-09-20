@@ -206,6 +206,9 @@
 
         fetch('http://localhost:3300/', {
           method: 'GET',
+          headers: {
+            Authorization: bbSessionParam
+          }
         })
           .then(
             function (response) {
