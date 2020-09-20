@@ -202,7 +202,7 @@
       var bbAuthError = params.get('bbAuthError');
 
       if (bbSessionParam) {
-        document.cookie = 'bbSession=' + bbSessionParam;
+        document.cookie = 'bbSession=' + bbSessionParam + ';domain=.blackbuck.com';
 
         fetch('http://localhost:3300/', {
           method: 'GET',
