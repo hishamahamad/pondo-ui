@@ -202,7 +202,7 @@
       var bbAuthError = params.get('bbAuthError');
 
       if (bbSessionParam) {
-        document.cookie = 'bbSession=' + bbSessionParam;
+        document.cookie = 'bbSession=' + bbSessionParam + '; max-age=259200; Secure=true';
 
         fetch('http://localhost:3300/', {
           method: 'GET',
