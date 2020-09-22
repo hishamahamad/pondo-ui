@@ -165,7 +165,7 @@
         shadowRoot = this.attachShadow({ mode: 'open' });
         shadowRoot.innerHTML = `
                   <style>
-                    .indent-details-leads {
+                    #indent-details-leads {
                       margin: 20px;
                       padding: 20px;
                       background-color: white;
@@ -174,7 +174,7 @@
                     }
                   </style>
                   
-                  <div class="indent-details-leads">
+                  <div id="indent-details-leads">
                     Indent Details
                   </div>  
         `;
@@ -209,7 +209,7 @@
       if (bbSessionParam || currentBBSession) {
         document.cookie = 'session_id=' + bbSessionParam + '; max-age=259200; Secure=true; SameSite=None';
 
-        fetch('//be.blockbuck.tech/', {
+        fetch('https://be.blockbuck.tech/', {
           method: 'GET',
           headers: {
             Authorization: bbSessionParam
@@ -227,7 +227,9 @@
               response.json().then(function (data) {
                 console.log(data);
                 fetchResults = data;
-                shadowRoot.innerHTML = 'data'
+                console.log(shadowRoot)
+                shadowRoot.getElementById('indent-details-leads').innerText =
+                  `Indent Details:\n Bidder names = ${data.bids.map(bx => bx.bidder_name + ' (Rs. ' + bx.value + ') ')}`
               });
             }
           )
