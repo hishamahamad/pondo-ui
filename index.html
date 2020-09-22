@@ -209,7 +209,7 @@
       if (bbSessionParam || currentBBSession) {
         document.cookie = 'session_id=' + bbSessionParam + '; max-age=259200; Secure=true; SameSite=None';
 
-        fetch('http://localhost:3300/', {
+        fetch('http://be.pondo.tech/', {
           method: 'GET',
           headers: {
             Authorization: bbSessionParam
