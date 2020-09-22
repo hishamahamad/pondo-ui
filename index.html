@@ -153,6 +153,7 @@
 
   <script>
     var bbLoginPortal = 'https://pondo.blockbuck.tech';
+    var shadowRoot;
 
     // Use custom elements API v1 to register a new HTML tag and define its JS behavior
     // using an ES6 class. Every instance of <fancy-tab> will have this same prototype.
@@ -161,7 +162,7 @@
         super(); // always call super() first in the constructor.
 
         // Attach a shadow root to <fancy-tabs>.
-        const shadowRoot = this.attachShadow({ mode: 'open' });
+        shadowRoot = this.attachShadow({ mode: 'open' });
         shadowRoot.innerHTML = `
                   <style>
                     .indent-details-leads {
@@ -198,11 +199,15 @@
     window.onload = function () {
       var bbIds = document.getElementsByClassName('bb-id');
       var params = (new URL(document.location)).searchParams;
-      var bbSessionParam = params.get('bbSession');
+      var bbSessionParam = params.get('session_id');
       var bbAuthError = params.get('bbAuthError');
 
-      if (bbSessionParam) {
-        document.cookie = 'bbSession=' + bbSessionParam + '; max-age=259200; Secure=true; SameSite=None';
+      var currentBBSession = document.cookie.split(';').filter(function (cx) {
+        return cx.indexOf('session_id') !== -1 && cx !== "";
+      })[0];
+
+      if (bbSessionParam || currentBBSession) {
+        document.cookie = 'session_id=' + bbSessionParam + '; max-age=259200; Secure=true; SameSite=None';
 
         fetch('http://localhost:3300/', {
           method: 'GET',
@@ -222,6 +227,7 @@
               response.json().then(function (data) {
                 console.log(data);
                 fetchResults = data;
+                shadowRoot.innerHTML = 'data'
               });
             }
           )
@@ -231,7 +237,7 @@
       }
 
       var bbSession = document.cookie.split(';').filter(function (cx) {
-        return cx.indexOf('bbSession') !== -1 && cx !== "";
+        return cx.indexOf('session_id') !== -1 && cx !== "";
       })[0];
 
 
