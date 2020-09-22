@@ -209,7 +209,7 @@
       if (bbSessionParam || currentBBSession) {
         document.cookie = 'session_id=' + bbSessionParam + '; max-age=259200; Secure=true; SameSite=None; Domain=.blockbuck.tech';
 
-        fetch('http://be.blockbuck.tech/', {
+        fetch('//be.blockbuck.tech/', {
           method: 'GET',
           headers: {
             Authorization: bbSessionParam
